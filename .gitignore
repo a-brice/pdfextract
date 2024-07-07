@@ -1,0 +1,4 @@
+env
+v1
+uploads/templates/*
+__pycache__
