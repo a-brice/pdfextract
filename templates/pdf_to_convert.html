@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/pdf_convert.css')}}">
+    <title>Choose PDF</title>
+</head>
+<body>
+    <div class="container">
+        <div class="sub-ctn">
+            <h1>Extract data from PDF</h1>
+            <div>
+                <form action="{{url_for('extraction')}}" method="post" class="drop" enctype='multipart/form-data'>
+                    <input type="submit" value="Suivant" class="next-btn">
+                    <div class="drop-zone">
+                        <input type="file" name="pdfs[]" id="pdf-file" required multiple accept=".pdf,.png,.jpg">
+                        <input type="hidden" name="template_id" value="{{template_id}}">
+                        <div class="drop-info">
+                            <img src="{{url_for('static', filename='img/folderwithdocuments_120818.svg')}}" class="icon-doc hiding" alt="docs">
+                            <h2 class="lbl-file">Please load or drop the PDF files you want extract data from</h2>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script text="script/javascript">
+        iptFile = document.querySelector('#pdf-file');
+        labelfile = document.querySelector('.lbl-file');
+        var a;
+
+        iptFile.addEventListener('load', () => {
+            let newLabel = "";
+            for (let i = 0; i < iptFile.files.length; i++){
+                newLabel += iptFile.files[i].name;
+            }
+            labelfile.textContent = newLabel;
+        });
+
+        iptFile.addEventListener('dragover', () => {
+            labelfile.textContent = "Drop here";
+        });
+
+        iptFile.addEventListener('dragleave', () => {
+            if (iptFile.files.length == 0){
+                labelfile = "Please load or drop the PDF files you want extract data from";
+            }
+        })
+
+        iptFile.addEventListener('input', () => {
+            let label = iptFile.files[0].name;
+            for (let i = 1; i < iptFile.files.length; i++){
+                label += ', ', iptFile.files[i].name;
+            }
+            labelfile.textContent = "Files dropped : \n" + label;
+            document.querySelector('.icon-doc').classList.remove('hiding');
+        })
+    </script>
+</body>
+</html>

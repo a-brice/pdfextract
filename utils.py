@@ -5,12 +5,16 @@ import os
 def convert_to_img(template_dir, filename):
     
     doc = fitz.open(os.path.join(template_dir, filename))
+    img_path = os.path.join(template_dir, 'pages')
+    if not os.path.exists(img_path):
+        os.mkdir(img_path)
+    
     nb_pages = doc.page_count
     for no_page in range(nb_pages):
         page = doc.load_page(no_page)
         px = page.get_pixmap(dpi=120)
         name = '.'.join(filename.split('.')[:-1])
-        px.save(os.path.join(template_dir, f'{name}_p{no_page}.png'))
+        px.save(os.path.join(img_path, f'{name}_$p#{no_page}.png'))
     doc.close()
     return nb_pages
 
@@ -23,8 +27,9 @@ def get_next_id(upload_folder):
     return max(list_folder) + 1
 
 
-def get_page(upload_folder, template_id, page):
-    file_list = os.listdir(os.path.join(upload_folder, str(template_id)))
-    pagename = [x for x in file_list if f'p{page}.png' in x]
-    assert len(pagename) > 0, f'Page n°{page} doesn\'t exist in upload folder'
-    return str(template_id) + '/' + pagename[0]
+def get_page(directory, page, complete_path=True):
+    file_list = os.listdir(directory)
+    pagename = [x for x in file_list if f'_$p#{page}.png' in x]
+
+    return os.path.join(directory, pagename[0]) if complete_path else pagename[0]
+

@@ -1,0 +1,161 @@
+body{
+    margin: 0;
+    padding: 0;
+    margin-bottom: 200px;
+}
+
+h1{
+    text-align: center;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+}
+
+.frame{
+    box-shadow: 2px 2px 5px gray;
+}
+
+#shadow-box{
+    padding: 10px 30px;
+    background-color: #515151;
+}
+
+.toolbar{
+    height: 100px;
+    background-color: #212121;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 70px;
+}
+
+.pages, .tools{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tools{
+    gap: 1.5em;
+}
+
+.pages{
+
+}
+
+.lbl-name{
+    color: white;
+    font: 1em serif;
+    margin-right: 10px;
+}
+
+.label-span{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: red;
+    font: bold 0.8em serif;
+    display: none;
+}
+
+#box-name{
+    width: 40px;
+}
+
+.nb_page{
+    margin-left: 10px;
+    color: white;
+    font-size: 1em;
+}
+
+.icon{
+    width: 22px;
+    height: 22px;
+    padding: 8px;
+}
+
+.icon:hover, .active-icon{
+    background-color: rgba(240, 248, 255, 0.495);
+    border-radius: 10px;
+}
+
+.arrow-left{
+    transform: rotate(180deg);
+}
+
+.icon.eye.hide{
+    display: none;
+}
+
+input#no_page{
+    background: gray;
+    outline: none;
+    height: 25px;
+    width: 18px;
+    font: 1em times;
+    color: white;
+    text-align: center;
+}
+
+#content-box{
+    position: relative;
+    box-shadow: 10px 4px 7px #3f3f3f;
+}
+
+
+#content-box.ch-cursor{
+    cursor: crosshair;
+}
+
+.btn-div{
+    display: flex;
+    justify-content: end;
+}
+
+button.cont{
+    font: 1.5em bold serif;
+    background: none;
+    border: 3px solid gray;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.middle-nav{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+}
+
+.radio-btn-div input{
+    display: none;
+}
+
+.radio-btn-div {
+    display: flex;
+}
+
+.radio-btn-div label{
+    padding: 8px 12px;
+    color: white;
+    border: 1px gray solid;
+    margin: none;
+    display: block;
+}
+
+.radio-btn-div input:checked + label{
+    background-color: #3d2b63;
+}
+
+.radio-btn-div label[for='r-text']{
+    border-radius:  5px 0 0 5px;
+}
+
+.radio-btn-div label[for='r-box']{
+    border-radius: 0 5px 5px 0;
+    border-left: 0;
+}

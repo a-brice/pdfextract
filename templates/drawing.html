@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/drawing.css')}}">
+    <title>Document extractor</title>
+</head>
+
+<body>
+    <h1>Create the drawing : Define zones to extract</h1>
+    <div class="container">
+        <div>
+            <div class="btn-div">
+                <button class="cont">Suivant</button>
+            </div>
+            <div class="frame">
+                <div class="toolbar">
+                    <nav class="pages">
+                        <img src="{{url_for('static', filename='img/chevron-right-solid.svg')}}" class="icon arrow-left prev" alt="arrow">
+                        <input type="text" id="no_page" value="1">
+                        <div class="nb_page"> / {{max_page}}</div>
+                        <img src="{{url_for('static', filename='img/chevron-right-solid.svg')}}" class="icon next" alt="arrow">
+                    </nav>
+                    <div class="middle-nav">
+                        <div>
+                            <label for="box-name" class="lbl-name">Box name :</label>
+                            <input type="text" name="box-name" id="box-name">
+                        </div>
+                        <div class="radio-btn-div">
+                            <input type="radio" name="type" value="Text" id="r-text" checked>
+                            <label for="r-text">Text</label>
+                            <input type="radio" name="type" value="Box" id="r-box">
+                            <label for="r-box">Box</label>
+                        </div>
+                    </div>
+                    <div class="tools">
+                        <img src="{{url_for('static', filename='img/pen-nib-solid.svg')}}" class="icon pen" alt="pencil">
+                        <img src="{{url_for('static', filename='img/trash_can_icon_198505.svg')}}" class="icon can" alt="can">
+                        <img src="{{url_for('static', filename='img/eye_icon-icons.com_71204.svg')}}" class="icon eye hide" alt="eye show">
+                        <img src="{{url_for('static', filename='img/eye-blocked-icons.com_70973.svg')}}" class="icon eye" alt="eye hide">
+                        <img src="{{url_for('static', filename='img/download-solid.svg')}}" class="icon download" alt="download">
+                    </div>
+                </div>
+                <div id="shadow-box">
+                    <div id="content-box">
+                        <img src="{{url_for('get_media', template_id=template_id)}}" class="pdf" alt="pdf">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+    <script>
+        let pdf = document.querySelector('img.pdf');
+        let maxPage = {{max_page}};
+        let currPage = {{page}};
+        let template_id = "{{template_id}}";
+        let leftArrow = document.querySelector('.icon.prev');
+        let rightArrow = document.querySelector('.icon.next');
+        let noPageInput = document.querySelector('#no_page');
+        let urlSave = '{{url_for("save_drawing", template_id=template_id)}}';
+        let urlDload = '{{url_for("download_drawing", template_id=template_id)}}';
+    </script>
+    <script src="{{url_for('static', filename='js/handleEyeIcon.js')}}"></script>
+    <script src="{{url_for('static', filename='js/handlePages.js')}}"></script>
+    <script src="{{url_for('static', filename='js/draw.js')}}"></script>
+    <script src="{{url_for('static', filename='js/download.js')}}"></script>
+    <script>
+        let nextBtn = document.querySelector('.cont');
+        nextBtn.onclick = () => {
+            let drawing = getDrawing();
+
+            req = fetch(urlSave, {
+                method: 'POST',
+                headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+                body: JSON.stringify(drawing)
+            }).then(res => {
+                if (res.ok)
+                    location.href = '{{url_for("get_test_pdf", template_id=template_id)}}';
+            })
+
+        }
+
+    </script>
+</body>
+
+</html>
