@@ -1,4 +1,5 @@
 import fitz
+import numpy as np
 import os
 
 
@@ -33,3 +34,18 @@ def get_page(directory, page, complete_path=True):
 
     return os.path.join(directory, pagename[0]) if complete_path else pagename[0]
 
+
+
+
+def occurence_dict(dic):
+    
+    keys = np.array([x['label'] for x in dic])
+    keys, counts = np.unique(keys, return_counts=True)
+    idx = np.where(counts > 1)[0]
+    dupl_keys = dict(zip(keys[idx], np.zeros(idx.shape, np.int32)))
+    for x in dic:
+        if x['label'] in dupl_keys.keys():
+            dupl_keys[x["label"]] += 1
+            x['label'] = x['label'] + f'_{dupl_keys[x["label"]]}'
+            
+    return dic

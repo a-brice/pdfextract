@@ -31,6 +31,7 @@ form.drop{
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 .next-btn {
@@ -54,6 +55,27 @@ form.drop{
     display: none;
 }
 
+.btn-dload-div{
+    z-index: 1;
+}
+
+.btn-dload{
+    background: none;
+    font-size: 1em;
+    border-radius: 10px;
+    padding: 5px 10px;
+}
+
+.btn-dload.csv{
+    color: #689f38;
+    border: 2px solid #689F38;
+}
+
+.btn-dload.json{
+    color: #ffc107;
+    border: 2px solid #ffc107;
+}
+
 input#pdf-file{
     width: 100%;
     height: 100%;
@@ -68,5 +90,20 @@ input#pdf-file{
 }
 
 input#pdf-file::-webkit-file-upload-button, input#pdf-file::file-selector-button{
+    display: none;
+}
+
+.load{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.btn-dload-div{
     display: none;
 }

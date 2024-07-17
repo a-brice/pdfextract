@@ -9,6 +9,8 @@ import alignement
 import extract
 import json
 
+import pandas as pd
+
 import cv2 
 
 
@@ -59,7 +61,7 @@ def get_media(template_id, page=0):
         as_attachment=True
     )
 
-@app.route('/<template_id>/save', methods=['POST'])
+@app.route('/<template_id>/drawing/save', methods=['POST'])
 def save_drawing(template_id):
     upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'templates', str(template_id))
     filepath = os.path.join(upload_folder, 'drawing.json')
@@ -73,23 +75,42 @@ def save_drawing(template_id):
             {k:(eval(v) if k in ['page', 'bbox'] else v) for k,v in x.items()} 
             for x in drawing
         ]
+        drawing = utils.occurence_dict(drawing)
         json.dump(drawing, f)
         
     
     return Response('OK', status=200)
 
 
-@app.route('/<template_id>/download')
+@app.route('/<template_id>/drawing/download')
 def download_drawing(template_id):
     upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'templates', str(template_id))
     filepath = os.path.join(upload_folder, 'drawing.json')
     
     if not os.path.exists(filepath):
-        return Response('The config file has not be  saved', status=400)
+        return Response('The config file has not be saved', status=400)
 
     return send_from_directory(
         upload_folder,
         'drawing.json', 
+        as_attachment=True
+    )
+
+
+@app.route('/<template_id>/result/<type>/download')
+def download_result(template_id, type):
+    upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'templates', str(template_id))
+    if type == 'CSV':
+        filename = 'result.csv'
+    else:
+        filename = 'result.json'
+
+    if not os.path.exists(os.path.join(upload_folder, filename)):
+        return Response('The result file has not be created', status=400)
+
+    return send_from_directory(
+        upload_folder,
+        filename, 
         as_attachment=True
     )
 
@@ -135,30 +156,18 @@ def extraction():
             infos = extract_from_pdf(template_id, name)
             all_pdf_infos[name] = infos
         
-        with open(os.path.join(app.config['UPLOAD_FOLDER'], 'templates', str(template_id), 'result.json'), 'w') as file:
-            json.dump(all_pdf_infos, file)
-
-        for name, value in all_pdf_infos.items():
-            pass
-
+        result_path = os.path.join(app.config['UPLOAD_FOLDER'], 'templates', str(template_id))
         
-        
+        df = pd.DataFrame.from_dict(all_pdf_infos, orient='index')
+        df.reset_index().rename(columns={'index': 'File'}).to_csv(
+            os.path.join(result_path, 'result.csv'), 
+            sep=';', 
+            index=False
+        )
+        df.to_json(os.path.join(result_path, 'result.json'), orient='index')
+
     return Response('OK', 200)
 
-
-def occurence_dict(dic):
-    
-    import numpy as np
-    keys = np.array([x['label'] for x in dic])
-    keys, counts = np.unique(keys, return_counts=True)
-    idx = np.where(counts > 1)
-    dupl_keys = dict(zip(keys[idx], np.zeros(idx.shape)))
-    for x in dic:
-        if x['label'] in dupl_keys.keys():
-            dupl_keys[x["label"]] += 1
-            x['label'] = x['label'] + f'_{dupl_keys[x["label"]]}'
-            
-    # TODO 
 
 
 def extract_from_pdf(template_id, testname):
@@ -186,7 +195,7 @@ def extract_from_pdf(template_id, testname):
         drawing_page = [x for x in drawing if x['page'] == no_page]
         info, img_show = extract.extract_text(img, drawing_page)
         cv2.imwrite(show_dir + f'/p{no_page}.png', img_show)
-        info[f'time_for_page{no_page} (sec)'] = round((time.time() - start), 2)
+        info[f'time_for_page_no_{no_page}(sec)'] = round((time.time() - start), 2)
         infos = dict(**infos, **info)
     
     return infos
