@@ -14,6 +14,12 @@ import pandas as pd
 import cv2 
 
 
+# TODO 
+### Inclusion et Extraction de JPG/PNG 
+### Formatting des apps en 2 parties (partie drawing et partie config file)
+### Test unitaires avec la sécurisation de l'app
+### Création de l'API 
+
 app = Flask('extractor')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
@@ -24,6 +30,10 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/template-choice')
+def template_choice():
+    return render_template('template_choice.html')
 
 
 
@@ -200,5 +210,8 @@ def extract_from_pdf(template_id, testname):
     
     return infos
 
+@app.route('/file-choice')
+def select_files():
+   return render_template('file_choice.html') 
 
 app.run(debug=True)

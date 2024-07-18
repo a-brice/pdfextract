@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/template_choice.css')}}">
+    <title>Choose your PDF</title>
+</head>
+<body>
+    <form action="{{url_for('get_drawing')}}" method="post" class="drop" enctype="multipart/form-data">
+        <h1>Choose a template PDF</h1>
+        <span class="ps"> <p class="info">i</p>Choosing a good template file will allows you to correctly align the other document from which you want to extract data from</span>
+        <div class="drop-zone">
+            <h2 class="lbl-file">Please load or drop the PDF file that will serve you as a template</h2>
+            <input type="file" name="template" id="tpt" required accept=".pdf,.png,.jpg">
+        </div>
+    </form>
+    <script src="{{url_for('static', filename='js/template_choice.js')}}"></script>
+    <script>
+        let iptFile = document.querySelector('#tpt');
+        let labelfile = document.querySelector('.lbl-file');
+
+        iptFile.addEventListener('dragenter', () => {
+            iptFile.style.borderStyle = 'dotted';
+            labelfile.textContent = "Drop here";
+        });
+
+        iptFile.addEventListener('dragleave', () => {
+            iptFile.style.borderStyle = 'dashed';
+            labelfile.textContent = "Please load or drop the PDF files you want extract data from";
+        })
+    </script>
+</body>
+</html>

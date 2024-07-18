@@ -1,0 +1,44 @@
+
+h1{
+    text-align: center;
+}
+
+.container{
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
+
+.container a{
+    display: flex;
+    width: 40%;
+    height: 40vh;
+    max-height: 500px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+h3{
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.col{
+    margin: auto;
+}
+
+.container a:first-child{
+    background-color: rgb(34, 157, 61);
+}
+
+.container a:last-child{
+    background-color: brown;
+}

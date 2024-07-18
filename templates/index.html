@@ -3,13 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Type</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
-    <title>Choose your PDF</title>
 </head>
 <body>
-    <form action="{{url_for('get_drawing')}}" method="post" enctype="multipart/form-data">
-        <input type="file" name="template" id="tpt">
-    </form>
-    <script src="{{url_for('static', filename='js/index.js')}}"></script>
+    <h1>Choose the method you want to use for PDF extraction</h1>
+    <div class="container">
+        <a href="{{url_for('template_choice')}}">
+            <div class="col">
+                <h3>Drawing on templates</h3> 
+                <span>Define zones from PDF to extract</span> 
+            </div>
+        </a>
+        <a href="{{url_for('select_files')}}">
+            <div class="col">
+                <h3>Choosing a configuration</h3>
+                <span>Give the config file and extract infos</span>
+            </div>
+        </a>
+    </div>
 </body>
 </html>

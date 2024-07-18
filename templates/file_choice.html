@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose configuration</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/file_choice.css')}}">
+</head>
+<body>
+    <form action="{{url_for('extraction')}}" method="POST" class="form-choice" enctype="multipart/form-data">
+        <h1>Fill the input with correct files</h1>
+        <div class="form-div">
+            <div class="choice">
+                <div class="ipt">
+                    <label for="template">Choose template PDF</label>
+                    <input type="file" required accept=".pdf,.png,.jpg" name="template" class="ipt-file" id="template">
+                </div>
+                <div class="ipt">
+                    <label for="config">Choose config file (JSON)</label>
+                    <input type="file" required accept=".json" name="config" class="ipt-file" id="config">
+                </div>
+                <div class="ipt">
+                    <label for="test">Choose test files</label>
+                    <input type="file" required accept=".pdf,.png,.jpg" multiple name="test" class="ipt-file" id="test">
+                </div>
+            </div>
+            <button type="submit" class="submit">Submit</button>
+        </div>
+    </form>
+</body>
+</html>
