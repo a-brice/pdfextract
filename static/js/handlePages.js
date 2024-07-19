@@ -1,7 +1,7 @@
 
 function pageChange(page){
     // Get the new src of image
-    pdf.src = `/media/${template_id}/${page}`;
+    pdf.src = `/media/${sess_id}/${page}`;
 
     console.log(page);
     // Change the visibility of box that aren't in the current page

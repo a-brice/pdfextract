@@ -45,7 +45,7 @@
                 </div>
                 <div id="shadow-box">
                     <div id="content-box">
-                        <img src="{{url_for('get_media', template_id=template_id)}}" class="pdf" alt="pdf">
+                        <img src="{{url_for('get_media', sess_id=sess_id)}}" class="pdf" alt="pdf">
                     </div>
                 </div>
             </div>
@@ -58,12 +58,12 @@
         let pdf = document.querySelector('img.pdf');
         let maxPage = {{max_page}};
         let currPage = {{page}};
-        let template_id = "{{template_id}}";
+        let sess_id = "{{sess_id}}";
         let leftArrow = document.querySelector('.icon.prev');
         let rightArrow = document.querySelector('.icon.next');
         let noPageInput = document.querySelector('#no_page');
-        let urlSave = '{{url_for("save_drawing", template_id=template_id)}}';
-        let urlDload = '{{url_for("download_drawing", template_id=template_id)}}';
+        let urlSave = '{{url_for("save_drawing", sess_id=sess_id)}}';
+        let urlDload = '{{url_for("download_drawing", sess_id=sess_id)}}';
     </script>
     <script src="{{url_for('static', filename='js/handleEyeIcon.js')}}"></script>
     <script src="{{url_for('static', filename='js/handlePages.js')}}"></script>
@@ -80,7 +80,7 @@
                 body: JSON.stringify(drawing)
             }).then(res => {
                 if (res.ok)
-                    location.href = '{{url_for("get_test_pdf", template_id=template_id)}}';
+                    location.href = '{{url_for("get_test_pdf", sess_id=sess_id)}}';
             })
 
         }

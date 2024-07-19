@@ -19,7 +19,7 @@
                             <img src="{{url_for('static', filename='img/bubble-loading.svg')}}" class="loading" style="display: none;" alt="load">
                         </div>
                         <input type="file" name="pdfs[]" id="pdf-file" required multiple accept=".pdf,.png,.jpg">
-                        <input type="hidden" name="template_id" value="{{template_id}}">
+                        <input type="hidden" name="sess_id" value="{{sess_id}}">
                         <div class="drop-info">
                             <img src="{{url_for('static', filename='img/folderwithdocuments_120818.svg')}}" class="icon-doc hiding" alt="docs">
                             <h2 class="lbl-file">Please load or drop the PDF files you want extract data from</h2>
@@ -40,12 +40,12 @@
         let DloadCSVBtn = document.querySelector('.btn-dload.csv');
 
         DloadCSVBtn.addEventListener('click', e => {
-            let urlDload = "{{url_for('download_result', template_id=template_id, type='CSV')}}";
+            let urlDload = "{{url_for('download_result', sess_id=sess_id, type='CSV')}}";
             location.href = urlDload;
         })
 
         DloadJSONBtn.addEventListener('click', e => {
-            let urlDload = "{{url_for('download_result', template_id=template_id, type='JSON')}}";
+            let urlDload = "{{url_for('download_result', sess_id=sess_id, type='JSON')}}";
             location.href = urlDload;
         })
 

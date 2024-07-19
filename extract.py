@@ -96,3 +96,9 @@ def extract_text(img, dict_entity):
             
     return text, img_show
     
+
+
+def show_highlighted_img(test_dir, page, img):
+    dirpath = os.path.join(test_dir, 'show')
+    os.makedirs(dirpath, exist_ok=True)
+    cv2.imwrite(dirpath + f'/p{page}.png', img)

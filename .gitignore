@@ -1,4 +1,4 @@
 env
 v1
-uploads/templates/*
+uploads/*
 __pycache__
