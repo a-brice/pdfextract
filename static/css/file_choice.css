@@ -33,7 +33,12 @@ form .ipt-file::-webkit-file-upload-button{
     display: none;
 }
 
-.submit{
+.btns{
+    display: flex;
+    gap: 2em;
+}
+
+.next-btn{
     display: block;
     padding: 10px 35px;
     border: 2px solid rgb(95, 33, 83);
@@ -41,10 +46,48 @@ form .ipt-file::-webkit-file-upload-button{
     background: none;
     border-radius: 10px;
     margin: 15px;
+    position: absolute;
     font-weight: bold;
+}
+
+.btn-dload-div{
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+    margin: 15px auto;
+}
+
+.dload-csv, .dload-json {
+    background: none;
+    border-radius: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+}
+
+.dload-csv{
+    border: 2px solid rgb(33, 33, 95);
+    color: rgb(33, 33, 95);
+}
+
+.dload-json {
+    border: 2px solid rgb(37, 95, 33);
+    color: rgb(37, 95, 33);
 }
 
 h1{
     text-align: center;
     margin-bottom: 50px;
+}
+
+.l-div{
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.loading{
+    margin: auto;
+    display: block;
 }

@@ -112,8 +112,16 @@ def download_drawing(sess_id):
 
 
 @app.route('/<sess_id>/result/<type>/download')
-def download_result(sess_id, type):
-    upload_folder = os.path.join(app.config['DRAWING_FOLDER'], str(sess_id))
+@app.route('/result/<type>/download')
+def download_result(sess_id=None, type='CSV'):
+    
+    if sess_id is not None:
+        upload_folder = os.path.join(app.config['DRAWING_FOLDER'], str(sess_id))
+    else:
+        sess_id = request.args.get('sess_id')
+        assert sess_id != '', 'Session id is mandatory'
+        upload_folder = os.path.join(app.config['CONF_FOLDER'], str(sess_id))
+
     if type == 'CSV':
         filename = 'result.csv'
     else:
@@ -260,7 +268,7 @@ def process_files():
     )
     df.to_json(os.path.join(upload_folder, 'result.json'), orient='index')
 
-    return Response('OK', 200)
+    return {'sess_id': sess_id}
 
 
 

@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose configuration</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/file_choice.css')}}">
 </head>
+
 <body>
-    <form action="{{url_for('process_files')}}" method="POST" class="form-choice" enctype="multipart/form-data">
+    <div class="l-div">
+        <img src="{{url_for('static', filename='img/bubble-loading.svg')}}" alt="wait" class="loading"
+            style="display: none;">
+    </div>
+    <form action="{{url_for('process_files')}}" method="POST" class="form-choice drop" enctype="multipart/form-data">
         <h1>Fill the input with correct files</h1>
         <div class="form-div">
             <div class="choice">
@@ -24,8 +30,20 @@
                     <input type="file" required accept=".pdf,.png,.jpg" multiple name="test" class="ipt-file" id="test">
                 </div>
             </div>
-            <button type="submit" class="submit">Submit</button>
+            <div class="btns">
+                <button class="next-btn">Submit</button>
+                <div class="btn-dload-div" style="display: none;">
+                    <a href="#" class="dload-csv">Download CSV</a>
+                    <a href="#" class="dload-json">Download JSON</a>
+                </div>
+            </div>
         </div>
     </form>
+    <script>
+        let urlCSVDload = "{{url_for('download_result', type='CSV')}}";
+        let urlJSONDload = "{{url_for('download_result', type='JSON')}}";
+    </script>
+    <script src="{{url_for('static', filename='js/sendTestFileConfig.js')}}"></script>
 </body>
+
 </html>
