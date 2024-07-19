@@ -11,12 +11,10 @@ import json
 
 import pandas as pd
 
-import cv2 
 
 
 # TODO 
 ### Inclusion et Extraction de JPG/PNG 
-### Formatting des apps en 2 parties (partie drawing et partie config file)
 ### Test unitaires avec la sécurisation de l'app
 ### Création de l'API 
 
