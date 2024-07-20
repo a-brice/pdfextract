@@ -80,7 +80,7 @@ def save_drawing(sess_id):
     if not os.path.exists(upload_folder):
         return Response('The sess_id path does not exist', status=400)
 
-    with open(filepath, 'w') as f:
+    with open(filepath, 'w', encoding='utf-8') as f:
         drawing = request.json
         drawing = [
             {k:(eval(v) if k in ['page', 'bbox'] else v) for k,v in x.items()} 
@@ -154,7 +154,7 @@ def extraction():
     if not os.path.exists(testdir):
         os.mkdir(testdir)
 
-    with open(os.path.join(upload_folder, 'drawing.json'), 'r') as json_file:
+    with open(os.path.join(upload_folder, 'drawing.json'), 'r', encoding='utf-8') as json_file:
         drawing = json.load(json_file)
 
     all_pdf_infos = {}
@@ -178,7 +178,8 @@ def extraction():
         sep=';', 
         index=False
     )
-    df.to_json(os.path.join(upload_folder, 'result.json'), orient='index')
+    with open(os.path.join(upload_folder, 'result.json'), 'w', encoding='utf-8') as file:
+        df.to_json(file, orient='index', force_ascii=False)
 
     return Response('OK', 200)
 
@@ -227,7 +228,7 @@ def process_files():
     
     # save the drawing (config file)
     drawing.save(os.path.join(upload_folder, 'drawing.json'))
-    with open(os.path.join(upload_folder, 'drawing.json'), 'r') as json_file:
+    with open(os.path.join(upload_folder, 'drawing.json'), 'r', encoding='utf-8') as json_file:
         drawing = json.load(json_file)
         drawing = utils.occurence_dict(drawing)
 
@@ -253,7 +254,8 @@ def process_files():
         sep=';', 
         index=False
     )
-    df.to_json(os.path.join(upload_folder, 'result.json'), orient='index')
+    with open(os.path.join(upload_folder, 'result.json'), 'w', encoding='utf-8') as file:
+        df.to_json(file, orient='index', force_ascii=False)
 
     return {'sess_id': sess_id}
 
