@@ -14,7 +14,6 @@ import pandas as pd
 
 
 # TODO 
-### Inclusion et Extraction de JPG/PNG 
 ### Test unitaires avec la sécurisation de l'app
 ### Création de l'API 
 
@@ -81,7 +80,7 @@ def save_drawing(sess_id):
     if not os.path.exists(upload_folder):
         return Response('The sess_id path does not exist', status=400)
 
-    with open(upload_folder + '/drawing.json', 'w') as f:
+    with open(filepath, 'w') as f:
         drawing = request.json
         drawing = [
             {k:(eval(v) if k in ['page', 'bbox'] else v) for k,v in x.items()} 
@@ -159,24 +158,18 @@ def extraction():
         drawing = json.load(json_file)
 
     all_pdf_infos = {}
+    dirnames = {}
 
     for file in request.files.getlist('pdfs[]'):
         filename = secure_filename(file.filename)
         dirname, extension = filename.rsplit('.', 1)
+        dirname, dirnames = utils.gen_dirnames(dirname, dirnames)
         test_dir = os.path.join(testdir, dirname)
-
-        if extension == 'pdf':
-            os.makedirs(test_dir, exist_ok=True)
-            file.save(os.path.join(test_dir, filename))
-            utils.convert_to_img(test_dir, filename)
-            infos = extract_from_pdf(template_dir, test_dir, drawing)
-            all_pdf_infos[filename] = infos
-        
-        elif extension == 'png' or extension == 'jpg':
-            file.save(os.path.join(testdir, filename))
-
-        else: 
-            raise Exception('Extension file not handled')
+        os.makedirs(test_dir, exist_ok=True)
+        file.save(os.path.join(test_dir, filename))
+        utils.convert_to_img(test_dir, filename)
+        infos = extract_from_pdf(template_dir, test_dir, drawing)
+        all_pdf_infos[filename] = infos
 
 
     df = pd.DataFrame.from_dict(all_pdf_infos, orient='index')
@@ -223,7 +216,7 @@ def process_files():
     test_files = request.files.getlist('test')
 
     sess_id = utils.get_next_id(app.config['CONF_FOLDER'])
-
+    
     upload_folder = os.path.join(app.config['CONF_FOLDER'], str(sess_id))
     template_dir = os.path.join(upload_folder, 'template_pdf')
     os.makedirs(template_dir)
@@ -240,23 +233,19 @@ def process_files():
 
     # save all files in directory containing their name and convert them to images
     all_pdf_infos = {}
+    dirnames = {}
+
     for file in test_files:
         filename = secure_filename(file.filename)
         dirname, extension = filename.rsplit('.', 1)
+        dirname, dirnames = utils.gen_dirnames(dirname, dirnames)
         test_dir = os.path.join(upload_folder, 'test_pdf', dirname)
+        os.makedirs(test_dir, exist_ok=True)
+        file.save(os.path.join(test_dir, filename))
+        utils.convert_to_img(test_dir, filename)
+        infos = extract_from_pdf(template_dir, test_dir, drawing)
+        all_pdf_infos[filename] = infos
 
-        if extension == 'pdf':
-            os.makedirs(test_dir, exist_ok=True)
-            file.save(os.path.join(test_dir, filename))
-            utils.convert_to_img(test_dir, filename)
-            infos = extract_from_pdf(template_dir, test_dir, drawing)
-            all_pdf_infos[filename] = infos
-            
-        elif extension == 'png' or extension == 'jpg':
-            file.save(os.path.join(upload_folder, 'test_pdf', filename))
-
-        else: 
-            raise Exception('Extension file not handled')
 
     df = pd.DataFrame.from_dict(all_pdf_infos, orient='index')
     df.reset_index().rename(columns={'index': 'File'}).to_csv(
