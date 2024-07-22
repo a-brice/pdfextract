@@ -22,7 +22,7 @@ inputFile.addEventListener('input', e => {
             newrect.setAttribute('label', obj[i].label);
             newrect.setAttribute('page', obj[i].page);
             newrect.setAttribute('type', obj[i].type);
-            newrect.setAttribute('bbox', `${obj[i].bbox}`);
+            newrect.setAttribute('bbox', JSON.stringify(obj[i].bbox));
             nb_rects++;
             clickOnRect(newrect);
             box.appendChild(newrect);
