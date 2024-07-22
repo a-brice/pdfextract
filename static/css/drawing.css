@@ -53,7 +53,6 @@ h1{
     left: 0;
     color: red;
     font: bold 0.8em serif;
-    display: none;
 }
 
 #box-name{
@@ -154,4 +153,34 @@ button.cont{
 .radio-btn-div label[for='r-box']{
     border-radius: 0 5px 5px 0;
     border-left: 0;
+}
+
+div.import-zone{
+    margin-top: 20px;
+    display: flex;
+    border: 1px gray solid;
+    width: 200px;
+}
+
+.lbl-icon{
+    border-right: 1px gray solid;
+    background-color: #eee;
+    padding: 8px;
+}
+
+.lbl-icon img{
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+#json{
+    display: block;
+    align-self: center;
+    margin: auto;
+    margin-left: 10px;
+}
+
+#json::-webkit-file-upload-button{
+    display: none;
 }

@@ -60,11 +60,12 @@ box.addEventListener('mousedown', (e) => {
     nb_clicks++;
     if (nb_clicks % 2 != 0){
         // let x = e.clientX, y = e.clientY;
+        let type = document.querySelector('input[name="type"]:checked').value;
         follows = true;
         nb_rects++;
         rect = document.createElement('div');
         rect.classList.add('rect-box');
-        rect.innerHTML = `<span class="label-span" ${!showLabelRect ? 'style="display: none"' : ''}>label : ${nb_rects}</span>`
+        rect.innerHTML = `<span class="label-span" ${showLabelRect ? '': 'style="display: none"'}>${nb_rects}; ${type}</span>`
         rect.style.cssText = origin_rect(coordX, coordY);
         box.appendChild(rect);
         rect.setAttribute('label', nb_rects);
@@ -115,6 +116,7 @@ function setRectBbox(){
 function setRectType(){
     let type = document.querySelector('input[name="type"]:checked').value;
     rect.setAttribute('type', type);
+    rect.querySelector('.label-span').textContent = rect.getAttribute('label') + ';' + type;
 }
 
 
@@ -132,7 +134,7 @@ function drawRectangle(){
 boxnameInput.addEventListener('input', (e) => {
     if (rect !== undefined){
         rect.setAttribute('label', e.target.value);
-        rect.querySelector('.label-span').textContent = 'label : ' + e.target.value;
+        rect.querySelector('.label-span').textContent = e.target.value + ';' + rect.getAttribute('type');
     }
 })
 

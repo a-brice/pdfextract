@@ -49,6 +49,12 @@
                     </div>
                 </div>
             </div>
+            <div class="import-zone">
+                <label for="json" class="lbl-icon">
+                    <img src="{{url_for('static', filename='img/upload-solid.svg')}}" alt="import">
+                </label>
+                <input type="file" name="json" id="json" accept=".json">
+            </div>
         </div>
         
 
@@ -69,6 +75,7 @@
     <script src="{{url_for('static', filename='js/handlePages.js')}}"></script>
     <script src="{{url_for('static', filename='js/draw.js')}}"></script>
     <script src="{{url_for('static', filename='js/download.js')}}"></script>
+    <script src="{{url_for('static', filename='js/importDrawing.js')}}"></script>
     <script>
         let nextBtn = document.querySelector('.cont');
         nextBtn.onclick = () => {
