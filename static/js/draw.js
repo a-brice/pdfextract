@@ -8,16 +8,11 @@ let follows = false;
 let activateDrawing = false;
 let activateDrop = false;
 var rect, contentCoords;
+let originPoint = [];
 let coordX = 0;
 let coordY = 0;
 let typeBtn = ['#r-text', '#r-box'];
 
-let origin_rect = (x, y) => `
-    position: absolute;
-    top: ${y}px;
-    left: ${x}px;
-    border: 2px red dashed;
-`
 
 pen.addEventListener('click', () => {
     activateDrop = false;
@@ -66,7 +61,7 @@ box.addEventListener('mousedown', (e) => {
         rect = document.createElement('div');
         rect.classList.add('rect-box');
         rect.innerHTML = `<span class="label-span" ${showLabelRect ? '': 'style="display: none"'}>${nb_rects}; ${type}</span>`
-        rect.style.cssText = origin_rect(coordX, coordY);
+        rect.style.cssText = setOriginRect(coordX, coordY);
         box.appendChild(rect);
         rect.setAttribute('label', nb_rects);
         boxnameInput.value = nb_rects;
@@ -113,6 +108,16 @@ function setRectBbox(){
     rect.setAttribute('page', currPage);
 }
 
+function setOriginRect(x, y){
+    originPoint = [x, y];
+    return `
+        position: absolute;
+        top: ${y}px;
+        left: ${x}px;
+        border: 2px red dashed;
+    `
+}
+
 function setRectType(){
     let type = document.querySelector('input[name="type"]:checked').value;
     rect.setAttribute('type', type);
@@ -124,11 +129,16 @@ function drawRectangle(){
     if (!activateDrawing || !follows)
         return;
     contentCoords = box.getBoundingClientRect();
-    x = contentCoords.width - coordX; 
-    y = contentCoords.height - coordY;
-    rect.style.right = x + 'px';
-    rect.style.bottom = y + 'px';
+    let [x0, y0] = originPoint;
+    let [x, y] = [coordX, coordY];
+    rect.style.width = Math.abs(x - x0) + 'px';
+    rect.style.height = Math.abs(y - y0) + 'px';
 
+    if (x < x0) rect.style.left = x + 'px';
+    else rect.style.left = x0 + 'px';
+    
+    if (y < y0) rect.style.top = y + 'px';
+    else rect.style.top = y0 + 'px';
 }
 
 boxnameInput.addEventListener('input', (e) => {
