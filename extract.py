@@ -6,7 +6,7 @@ import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-white_pixel_threshold = 53 + 60 # numbers of zeros in the cropped pixel image
+black_pixel_threshold = 40 # numbers of zeros in the cropped pixel image
 
 
 
@@ -39,8 +39,18 @@ def opening(image):
 
 # canny edge 
 def canny(image):
-	return cv2.Canny(image, 100, 200)
+	return cv2.Canny(image, 50, 150)
 
+
+def remove_box_line(image):
+    """Remove box line to get the response easily"""
+    edges = canny(image)
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=10, minLineLength=10, maxLineGap=5)
+    for line in lines:
+            x1, y1, x2, y2 = line[0]
+            if x1 == x2 or y1 == y2:
+                cv2.line(image, (x1, y1), (x2, y2), 255, 2)
+    return image
 
 
 def extract_text(img, dict_entity):
@@ -86,12 +96,12 @@ def extract_text(img, dict_entity):
             
             # Image filter 
             img_cropped = grayscale(img_cropped)
+            img_cropped = remove_box_line(img_cropped)
             img_cropped = thresholding(img_cropped)
-            white_pixels_nb = cv2.countNonZero(img_cropped)
-            check = 0 if white_pixels_nb > white_pixel_threshold else 1
+            black_pixels_nb = np.count_nonzero(img_cropped == 0)
+            check = 1 if black_pixels_nb > black_pixel_threshold else 0
             text[roi['label']] = check
-            
-                    
+                                
         img_show = cv2.addWeighted(img_show, 0.9, img_mask, 0.1, 0)
             
     return text, img_show
