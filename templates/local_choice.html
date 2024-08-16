@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose configuration</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/local_choice.css')}}">
+</head>
+
+<body>
+    <div class="l-div">
+        <img src="{{url_for('static', filename='img/bubble-loading.svg')}}" alt="wait" class="loading"
+            style="display: none;">
+    </div>
+    <form method="POST" class="form-choice drop" enctype="multipart/form-data">
+        <h1>Fill the input with correct files</h1>
+        <div class="form-div">
+            <div class="choice">
+                <div class="ipt">
+                    <label for="template">Enter template PDF</label>
+                    <input type="file" required name="template" placeholder="Enter the full path of file" class="ipt-file" id="template">
+                </div>
+                <div class="ipt">
+                    <label for="config">Enter config file (JSON)</label>
+                    <input type="file" required name="config" placeholder="Enter the full path of file"  class="ipt-file" id="config">
+                </div>
+                <div class="ipt">
+                    <label for="test">Enter test files directory path</label>
+                    <input type="text" required placeholder="Enter full path of directory" name="test" class="ipt-text" id="test">
+                </div>
+            </div>
+            <div class="btns">
+                <button class="next-btn">Submit</button>
+                <div class="btn-dload-div" style="display: none;">
+                    <a href="#" class="dload-csv">Download CSV</a>
+                    <a href="#" class="dload-json">Download JSON</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        let urlCSVDload = "{{url_for('download_result', type='CSV')}}";
+        let urlJSONDload = "{{url_for('download_result', type='JSON')}}";
+    </script>
+    <!-- <script src="{{url_for('static', filename='js/sendTestFileConfig.js')}}"></script> -->
+    <script>
+        let form = document.querySelector('form.form-choice');
+    </script>
+</body>
+
+</html>

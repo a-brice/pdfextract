@@ -8,6 +8,9 @@
 </head>
 <body>
     <h1>Choose the method you want to use for PDF extraction</h1>
+    <nav class="go-local">
+        <a href="{{url_for('local_extract')}}" class="l-local">Local extraction config</a>
+    </nav>
     <div class="container">
         <a href="{{url_for('template_choice')}}">
             <div class="col">

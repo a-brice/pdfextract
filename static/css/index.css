@@ -3,6 +3,19 @@ h1{
     text-align: center;
 }
 
+
+.go-local{
+    margin: auto;
+    margin-top: 50px;
+    width: 85%;
+    margin-bottom: 20px;
+    font: 1em sans-serif;
+}
+.go-local a.l-local{
+    text-align: right;
+    display: block;
+}
+
 .container{
     width: 90%;
     margin: auto;

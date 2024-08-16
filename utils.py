@@ -21,7 +21,7 @@ def convert_to_img(template_dir, filename):
     nb_pages = doc.page_count
     for no_page in range(nb_pages):
         page = doc.load_page(no_page)
-        px = page.get_pixmap(dpi=120)
+        px = page.get_pixmap(dpi=180)
         name = filename.rsplit('.', 1)[0]
         px.save(os.path.join(img_path, f'{name}_$p#{no_page}.png'))
     doc.close()

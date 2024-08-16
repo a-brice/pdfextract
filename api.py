@@ -10,7 +10,8 @@ import extract
 import json
 
 import pandas as pd
-
+import shutil
+import pathlib 
 
 
 # TODO 
@@ -259,6 +260,73 @@ def process_files():
 
     return {'sess_id': sess_id}
 
+
+
+
+@app.route('/local/extract', methods=['GET', 'POST'])
+def local_extract():
+
+    tmp_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'temp')
+    
+    template_dir = os.path.join(tmp_dir, 'template_pdf')
+    test_dir = os.path.join(tmp_dir, 'test_pdf')
+    os.makedirs(template_dir, exist_ok=True)
+    os.makedirs(test_dir, exist_ok=True)
+    
+    
+    template = request.files.get('template')
+    config = request.files.get('config')
+
+    if request.method != 'POST' or not template or not config or not request.form.get('test'):
+        return render_template('local_choice.html')
+
+    # local_template_path = request.form.get('template')
+    # local_config_path = request.form.get('config')
+    # local_testdir = request.form.get('test')
+
+    template.save(os.path.join(template_dir, 'current.pdf'))
+    utils.convert_to_img(template_dir, 'current.pdf')
+    config.save(os.path.join(tmp_dir, 'drawing.json'))
+    with open(os.path.join(tmp_dir, 'drawing.json'), 'r', encoding='utf-8') as json_file:
+        drawing = json.load(json_file)
+        drawing = utils.occurence_dict(drawing)
+
+    
+    local_testdir = request.form.get('test')
+
+    if not os.path.isdir(local_testdir):
+        return Response('path entered does not exist or is not a directory', 400)
+
+
+    all_pdf_infos = {}
+    for file in os.listdir(local_testdir):
+        
+        name, *extension = file.rsplit('.', 1)
+        old_filepath = os.path.join(local_testdir, file)
+        new_filepath = os.path.join(test_dir, 'current.pdf')
+
+        if not os.path.isfile(old_filepath) or len(extension) == 0 or extension[0] != 'pdf':
+            continue
+
+        if os.path.exists(os.path.join(test_dir, 'pages')):
+            shutil.rmtree(os.path.join(test_dir, 'pages'))
+
+        print('Processing', file)
+        shutil.copyfile(old_filepath, new_filepath)
+        utils.convert_to_img(test_dir, 'current.pdf')
+        info = extract_from_pdf(template_dir, test_dir, drawing)
+        all_pdf_infos[file] = info
+        
+    df = pd.DataFrame.from_dict(all_pdf_infos, orient='index')
+    df.reset_index().rename(columns={'index': 'File'}).to_csv(
+        os.path.join(tmp_dir, 'result.csv'), 
+        sep=';', 
+        index=False
+    )
+    with open(os.path.join(tmp_dir, 'result.json'), 'w', encoding='utf-8') as file:
+        df.to_json(file, orient='index', force_ascii=False)
+
+    return Response('OK', 200)
 
 
 app.run(debug=True)
