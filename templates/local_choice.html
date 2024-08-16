@@ -31,19 +31,15 @@
                 </div>
             </div>
             <div class="btns">
-                <button class="next-btn">Submit</button>
+                <button class="next-btn" type="button">Submit</button>
                 <div class="btn-dload-div" style="display: none;">
-                    <a href="#" class="dload-csv">Download CSV</a>
-                    <a href="#" class="dload-json">Download JSON</a>
+                    <a href="{{url_for('download_result', sess_id='temp', type='CSV')}}" class="dload-csv">Download CSV</a>
+                    <a href="{{url_for('download_result', sess_id='temp', type='JSON')}}" class="dload-json">Download JSON</a>
                 </div>
             </div>
         </div>
     </form>
-    <script>
-        let urlCSVDload = "{{url_for('download_result', type='CSV')}}";
-        let urlJSONDload = "{{url_for('download_result', type='JSON')}}";
-    </script>
-    <!-- <script src="{{url_for('static', filename='js/sendTestFileConfig.js')}}"></script> -->
+    <script src="{{url_for('static', filename='js/sendTestFileLocalConfig.js')}}"></script>
     <script>
         let form = document.querySelector('form.form-choice');
     </script>

@@ -21,6 +21,7 @@ import pathlib
 app = Flask('extractor')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['DRAWING_FOLDER'] = os.path.join('uploads', 'by_drawing')
+app.config['TEMP_FOLDER'] = os.path.join('uploads', 'temp')
 app.config['CONF_FOLDER'] = os.path.join('uploads', 'with_config')
 
 if not os.path.exists(app.config['DRAWING_FOLDER']):
@@ -112,8 +113,9 @@ def download_drawing(sess_id):
 @app.route('/<sess_id>/result/<type>/download')
 @app.route('/result/<type>/download')
 def download_result(sess_id=None, type='CSV'):
-    
-    if sess_id is not None:
+    if sess_id == 'temp':
+        upload_folder = app.config['TEMP_FOLDER']
+    elif sess_id is not None:
         upload_folder = os.path.join(app.config['DRAWING_FOLDER'], str(sess_id))
     else:
         sess_id = request.args.get('sess_id')
