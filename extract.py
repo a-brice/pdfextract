@@ -66,9 +66,14 @@ def extract_text(img, dict_entity):
         
         left, top, right, bottom = roi['bbox']
         
+        # Draw rectangle on image to show
         cv2.rectangle(img_mask, (left, top), (right, bottom), (0, 0, 255), cv2.FILLED)
-        cv2.putText(img_show, roi['label'], (left + 10, bottom + 20), 1, 1, [0, 0, 255], 2)
-    
+        cv2.rectangle(img_show, (left, top), (right, bottom), (0, 0, 120), 2)
+        
+        # Add text on image to show 
+        textcoords = left + 10 if roi['label'] == 'Text' else right + 10, (bottom + top) // 2 
+        cv2.putText(img_show, roi['label'], (textcoords[0], textcoords[1]), 1, 1, [0, 0, 200], 2)
+        
     	# Crop the specific required portion of entire image
         img_cropped = img[top:bottom, left:right]
         
@@ -102,7 +107,7 @@ def extract_text(img, dict_entity):
             check = 1 if black_pixels_nb > black_pixel_threshold else 0
             text[roi['label']] = check
                                 
-        img_show = cv2.addWeighted(img_show, 0.9, img_mask, 0.1, 0)
+    img_show = cv2.addWeighted(img_show, 0.95, img_mask, 0.05, 0)
             
     return text, img_show
     

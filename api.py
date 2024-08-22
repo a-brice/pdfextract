@@ -27,6 +27,9 @@ app.config['CONF_FOLDER'] = os.path.join('uploads', 'with_config')
 if not os.path.exists(app.config['DRAWING_FOLDER']):
     os.makedirs(app.config['DRAWING_FOLDER'])
 
+if not os.path.exists(app.config['TEMP_FOLDER']):
+    os.makedirs(app.config['TEMP_FOLDER'])
+
 if not os.path.exists(app.config['CONF_FOLDER']):
     os.makedirs(app.config['CONF_FOLDER'])
 
@@ -268,7 +271,7 @@ def process_files():
 @app.route('/local/extract', methods=['GET', 'POST'])
 def local_extract():
 
-    tmp_dir = os.path.join(app.config['UPLOAD_FOLDER'], 'temp')
+    tmp_dir = app.config['TEMP_FOLDER']
     
     template_dir = os.path.join(tmp_dir, 'template_pdf')
     test_dir = os.path.join(tmp_dir, 'test_pdf')

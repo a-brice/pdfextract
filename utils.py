@@ -4,7 +4,7 @@ import os
 from PIL import Image
 
 
-def convert_to_img(template_dir, filename):
+def convert_to_img(template_dir, filename, dpi=180):
 
     img_path = os.path.join(template_dir, 'pages')
     if not os.path.exists(img_path):
@@ -21,7 +21,7 @@ def convert_to_img(template_dir, filename):
     nb_pages = doc.page_count
     for no_page in range(nb_pages):
         page = doc.load_page(no_page)
-        px = page.get_pixmap(dpi=180)
+        px = page.get_pixmap(dpi=dpi)
         name = filename.rsplit('.', 1)[0]
         px.save(os.path.join(img_path, f'{name}_$p#{no_page}.png'))
     doc.close()
