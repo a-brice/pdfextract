@@ -103,13 +103,13 @@ def save_drawing(sess_id):
         return Response('The sess_id path does not exist', status=400)
 
     with open(filepath, 'w', encoding='utf-8') as f:
-        drawing = request.json
-        drawing = [
+        config = request.json
+        config['drawing'] = [
             {k:(eval(v) if k in ['page', 'bbox'] else v) for k,v in x.items()} 
-            for x in drawing
+            for x in config['drawing']
         ]
-        drawing = utils.occurence_dict(drawing)
-        json.dump(drawing, f)
+        config['drawing'] = utils.occurence_dict(config['drawing'])
+        json.dump(config, f)
         
     
     return Response('OK', status=200)
@@ -178,7 +178,9 @@ def extraction():
         os.mkdir(testdir)
 
     with open(os.path.join(upload_folder, 'drawing.json'), 'r', encoding='utf-8') as json_file:
-        drawing = json.load(json_file)
+        config = json.load(json_file)
+        dpi = config['dpi']
+        drawing = config['drawing']
 
     all_pdf_infos = {}
     dirnames = {}
@@ -190,7 +192,7 @@ def extraction():
         test_dir = os.path.join(testdir, dirname)
         os.makedirs(test_dir, exist_ok=True)
         file.save(os.path.join(test_dir, filename))
-        utils.convert_to_img(test_dir, filename)
+        utils.convert_to_img(test_dir, filename, dpi=dpi)
         infos = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[filename] = infos
 
@@ -236,7 +238,7 @@ def select_files():
 @app.route('/with-config/process', methods=['POST'])
 def process_files():
     template = request.files.get('template')
-    drawing = request.files.get('config')
+    config = request.files.get('config')
     test_files = request.files.getlist('test')
 
     sess_id = utils.get_next_id(app.config['CONF_FOLDER'])
@@ -245,16 +247,20 @@ def process_files():
     template_dir = os.path.join(upload_folder, 'template_pdf')
     os.makedirs(template_dir)
 
-    # save and convert to image the template pdf
-    template.save(os.path.join(template_dir, secure_filename(template.filename)))
-    utils.convert_to_img(template_dir, secure_filename(template.filename))
     
     # save the drawing (config file)
-    drawing.save(os.path.join(upload_folder, 'drawing.json'))
+    config.save(os.path.join(upload_folder, 'drawing.json'))
     with open(os.path.join(upload_folder, 'drawing.json'), 'r', encoding='utf-8') as json_file:
-        drawing = json.load(json_file)
-        drawing = utils.occurence_dict(drawing)
+        config = json.load(json_file)
+        dpi = config['dpi']
+        config['drawing'] = utils.occurence_dict(config['drawing'])
+        drawing = config['drawing']
 
+    # save and convert to image the template pdf
+    template.save(os.path.join(template_dir, secure_filename(template.filename)))
+    utils.convert_to_img(template_dir, secure_filename(template.filename), dpi=dpi)
+    
+    
     # save all files in directory containing their name and convert them to images
     all_pdf_infos = {}
     dirnames = {}
@@ -266,7 +272,7 @@ def process_files():
         test_dir = os.path.join(upload_folder, 'test_pdf', dirname)
         os.makedirs(test_dir, exist_ok=True)
         file.save(os.path.join(test_dir, filename))
-        utils.convert_to_img(test_dir, filename)
+        utils.convert_to_img(test_dir, filename, dpi=dpi)
         infos = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[filename] = infos
 
@@ -306,13 +312,15 @@ def local_extract():
     # local_config_path = request.form.get('config')
     # local_testdir = request.form.get('test')
 
-    template.save(os.path.join(template_dir, 'current.pdf'))
-    utils.convert_to_img(template_dir, 'current.pdf')
     config.save(os.path.join(tmp_dir, 'drawing.json'))
     with open(os.path.join(tmp_dir, 'drawing.json'), 'r', encoding='utf-8') as json_file:
-        drawing = json.load(json_file)
-        drawing = utils.occurence_dict(drawing)
+        config = json.load(json_file)
+        dpi = config['dpi']
+        config['drawing'] = utils.occurence_dict(config['drawing'])
+        drawing = config['drawing']
 
+    template.save(os.path.join(template_dir, 'current.pdf'))
+    utils.convert_to_img(template_dir, 'current.pdf', dpi=dpi)
     
     local_testdir = request.form.get('test')
 
@@ -335,7 +343,7 @@ def local_extract():
 
         print('Processing', file)
         shutil.copyfile(old_filepath, new_filepath)
-        utils.convert_to_img(test_dir, 'current.pdf')
+        utils.convert_to_img(test_dir, 'current.pdf', dpi=dpi)
         info = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[file] = info
         

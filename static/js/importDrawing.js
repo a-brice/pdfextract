@@ -34,6 +34,6 @@ inputFile.addEventListener('input', e => {
     inputFile.files[0].text().then(
         res => JSON.parse(res)
     ).then(
-        obj => putRects(obj)
+        obj => putRects(obj['drawing'])
     );    
 })

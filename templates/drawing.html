@@ -37,17 +37,17 @@
                     </div>
                     <hr>
                     <div class="field">
-                        <label for="1toN">1 for N pages </label>
+                        <label for="_1toN">1 for N pages </label>
                         <label class="custom-checkbox">
-                            <input name="dummy" type="checkbox">
+                            <input name="1toN" id="_1toN" type="checkbox">
                             <span class="checkmark"></span>
                           </label>
                     </div>
                     <div class="field">
-                        <label for="1toN">On n° page </label>
+                        <label for="pageN">On n° page </label>
                         <div class="number-control">
                             <div class="number-left"></div>
-                            <input type="number" name="no_page" value="1" class="number-quantity">
+                            <input type="number" name="pageN" id="pageN" value="1" class="number-quantity">
                             <div class="number-right"></div>
                         </div>
                     </div>
@@ -129,11 +129,18 @@
         let nextBtn = document.querySelector('.cont');
         nextBtn.onclick = () => {
             let drawing = getDrawing();
-
+            let _1toN = document.querySelector('#_1toN').checked;
+            let pageN = parseInt(document.querySelector('#pageN').value) - 1;
+            let config = {
+                dpi: dpi,
+                _1toN: _1toN,
+                _1toNonPage: pageN,
+                drawing: drawing
+            }
             req = fetch(urlSave, {
                 method: 'POST',
                 headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-                body: JSON.stringify(drawing)
+                body: JSON.stringify(config)
             }).then(res => {
                 if (res.ok)
                     location.href = '{{url_for("get_test_pdf", sess_id=sess_id)}}';
