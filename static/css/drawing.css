@@ -106,7 +106,54 @@ input#no_page{
 
 .btn-div{
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+}
+
+.more{
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+}
+
+
+.more-icon{
+    height: 30px;
+    border-radius: 30px;
+    padding: 10px 20px;
+}
+
+.more-txt{
+    font: bold 1.5em Roboto;
+}
+
+.more:hover .more-icon{
+    background-color: #eee;
+}
+
+.more:hover .more-txt{
+    text-decoration: underline;
+}
+
+.adv-opt{
+    margin: 50px
+}
+
+.adv-opt.hide{
+    display: none;
+}
+
+.adv{
+    width: 30%;
+    padding: 30px;
+    box-shadow: 2px 1px 6px #515151;
+}
+
+.adv-opt .field{
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 button.cont{
@@ -150,9 +197,13 @@ button.cont{
     border-radius:  5px 0 0 5px;
 }
 
+.radio-btn-div label[for='r-dig']{
+    border-left: 0;
+    border-right: 0;
+}
+
 .radio-btn-div label[for='r-box']{
     border-radius: 0 5px 5px 0;
-    border-left: 0;
 }
 
 div.import-zone{
@@ -184,3 +235,116 @@ div.import-zone{
 #json::-webkit-file-upload-button{
     display: none;
 }
+
+
+/* Component */ 
+
+/* From Uiverse.io by KhaledMatalkah */ 
+.custom-checkbox {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-size: 16px;
+    color: #333;
+    transition: color 0.3s;
+  }
+  
+  .custom-checkbox input[type="checkbox"] {
+    display: none;
+  }
+  
+  .custom-checkbox .checkmark {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+    transform-style: preserve-3d;
+  }
+  
+  .custom-checkbox .checkmark::before {
+    content: "\2713";
+    font-size: 16px;
+    color: transparent;
+    transition: color 0.3s, transform 0.3s;
+  }
+  
+  .custom-checkbox input[type="checkbox"]:checked + .checkmark {
+    background-color: #333;
+    border-color: #333;
+    transform: scale(1.1) rotateZ(360deg) rotateY(360deg);
+  }
+  
+  .custom-checkbox input[type="checkbox"]:checked + .checkmark::before {
+    color: #fff;
+  }
+  
+  .custom-checkbox:hover {
+    color: #666;
+  }
+  
+  .custom-checkbox:hover .checkmark {
+    border-color: #666;
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+  }
+  
+  .custom-checkbox input[type="checkbox"]:focus + .checkmark {
+    box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.2);
+    outline: none;
+  }
+  
+  .custom-checkbox .checkmark,
+  .custom-checkbox input[type="checkbox"]:checked + .checkmark {
+    transition: background-color 1.3s, border-color 1.3s, color 1.3s, transform 0.3s;
+  }
+  
+
+  /* From Uiverse.io by Cybercom682 */ 
+.number-control {
+    display: flex;
+    align-items: center;
+  }
+  
+  .number-left::before,
+  .number-right::after {
+    content: attr(data-content);
+    background-color: #333333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    width: 20px;
+    height: 23px;
+    color: white;
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+  
+  .number-left::before {
+    content: "-";
+  }
+  
+  .number-right::after {
+    content: "+";
+  }
+  
+  .number-quantity {
+    padding: 0.25rem;
+    border: 0;
+    width: 50px;
+    -moz-appearance: textfield;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    outline: none;
+  }
+  
+  .number-left:hover::before,
+  .number-right:hover::after {
+    background-color: #666666;
+  }
+  

@@ -13,7 +13,30 @@
     <div class="container">
         <div>
             <div class="btn-div">
+                <div class="more">
+                    <img src="{{url_for('static', filename='img/ellipsis-vertical-solid.svg')}}" class="more-icon" alt="more">
+                    <span class="more-txt">More options</span>
+                </div>
                 <button class="cont">Suivant</button>
+            </div>
+            <div class="adv-opt hide">
+                <form method="post" class="adv">
+                    <div class="field">
+                        <label for="dpi">DPI</label>
+                        <div class="number-control">
+                            <div class="number-left"></div>
+                            <input type="number" name="dpi" class="number-quantity">
+                            <div class="number-right"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="1toN">1 for N pages </label>
+                        <label class="custom-checkbox">
+                            <input name="dummy" type="checkbox">
+                            <span class="checkmark"></span>
+                          </label>
+                    </div>
+                </form>
             </div>
             <div class="frame">
                 <div class="toolbar">
@@ -31,6 +54,8 @@
                         <div class="radio-btn-div">
                             <input type="radio" name="type" value="Text" id="r-text" checked>
                             <label for="r-text">Text</label>
+                            <input type="radio" name="type" value="Digit" id="r-dig">
+                            <label for="r-dig">Digit</label>
                             <input type="radio" name="type" value="Box" id="r-box">
                             <label for="r-box">Box</label>
                         </div>
@@ -76,6 +101,13 @@
     <script src="{{url_for('static', filename='js/draw.js')}}"></script>
     <script src="{{url_for('static', filename='js/download.js')}}"></script>
     <script src="{{url_for('static', filename='js/importDrawing.js')}}"></script>
+    <script>
+        let advSecBtn = document.querySelector('.more');
+        let advSec = document.querySelector('.adv-opt');
+        advSecBtn.addEventListener('click', () => {
+            advSec.classList.toggle('hide');
+        })
+    </script>
     <script>
         let nextBtn = document.querySelector('.cont');
         nextBtn.onclick = () => {

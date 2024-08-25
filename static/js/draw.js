@@ -11,7 +11,7 @@ var rect, contentCoords;
 let originPoint = [];
 let coordX = 0;
 let coordY = 0;
-let typeBtn = ['#r-text', '#r-box'];
+let typeBtn = ['#r-text', '#r-dig', '#r-box'];
 
 
 pen.addEventListener('click', () => {
@@ -88,6 +88,8 @@ function clickOnRect(Rect){
             boxnameInput.value = rect.getAttribute('label');
             if (rect.getAttribute('type') == 'Box'){
                 document.querySelector('input#r-box').checked = true;
+            } else if (rect.getAttribute('type') == 'Digit') {
+                document.querySelector('input#r-dig').checked = true;
             } else {
                 document.querySelector('input#r-text').checked = true;
             }
