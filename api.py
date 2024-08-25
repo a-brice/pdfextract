@@ -10,6 +10,7 @@ import extract
 import json
 
 import pandas as pd
+import glob
 import shutil
 import pathlib 
 
@@ -44,9 +45,24 @@ def template_choice():
 
 
 
-@app.route('/draw/', methods=['GET', 'POST'])
+@app.route('/draw/', methods=['GET', 'POST', 'PUT'])
 def get_drawing():
 
+    if request.method == 'PUT': 
+        dpi = request.form.get('dpi')
+        sess_id = request.form.get('sess_id')
+        assert dpi and sess_id and dpi.isnumeric() and sess_id.isnumeric(), "either dpi or id is not numeric"
+        
+        template_dir = os.path.join(app.config['DRAWING_FOLDER'], str(sess_id), 'template_pdf')
+        assert os.path.exists(template_dir), "template directory not found"
+        
+        filenames = [x for x in os.listdir(template_dir) if '.pdf' in x]
+        assert len(filenames) != 0, "template does not exist"
+
+        max_page = utils.convert_to_img(template_dir, filenames[0], dpi=int(dpi))
+
+        return Response('OK', 200)
+    
     if request.method != 'POST' or not request.files.get('template'):
         return redirect(url_for('index'))
     
@@ -62,9 +78,10 @@ def get_drawing():
     template.save(os.path.join(template_dir, filename))
 
     # create img from template file  
-    max_page = utils.convert_to_img(template_dir, filename)
+    dpi = 180
+    max_page = utils.convert_to_img(template_dir, filename, dpi=dpi)
     
-    return render_template('drawing.html', sess_id=sess_id, max_page=max_page, page=0)
+    return render_template('drawing.html', sess_id=sess_id, max_page=max_page, page=0, dpi=dpi)
 
 
 @app.route('/media/<sess_id>')

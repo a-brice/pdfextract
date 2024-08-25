@@ -25,16 +25,31 @@
                         <label for="dpi">DPI</label>
                         <div class="number-control">
                             <div class="number-left"></div>
-                            <input type="number" name="dpi" class="number-quantity">
+                            <input type="number" name="dpi" step="5" value="{{dpi}}" class="number-quantity">
                             <div class="number-right"></div>
                         </div>
                     </div>
+                    <div class="field">
+                        <button type="button" class="set-dpi">
+                            <img src="{{url_for('static', filename='img/refresh.svg')}}" alt="refresh">
+                            Set DPI
+                        </button>
+                    </div>
+                    <hr>
                     <div class="field">
                         <label for="1toN">1 for N pages </label>
                         <label class="custom-checkbox">
                             <input name="dummy" type="checkbox">
                             <span class="checkmark"></span>
                           </label>
+                    </div>
+                    <div class="field">
+                        <label for="1toN">On n° page </label>
+                        <div class="number-control">
+                            <div class="number-left"></div>
+                            <input type="number" name="no_page" value="1" class="number-quantity">
+                            <div class="number-right"></div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -90,6 +105,7 @@
         let maxPage = {{max_page}};
         let currPage = {{page}};
         let sess_id = "{{sess_id}}";
+        let dpi = {{dpi}};
         let leftArrow = document.querySelector('.icon.prev');
         let rightArrow = document.querySelector('.icon.next');
         let noPageInput = document.querySelector('#no_page');
@@ -101,6 +117,7 @@
     <script src="{{url_for('static', filename='js/draw.js')}}"></script>
     <script src="{{url_for('static', filename='js/download.js')}}"></script>
     <script src="{{url_for('static', filename='js/importDrawing.js')}}"></script>
+    <script src="{{url_for('static', filename='js/dpiChange.js')}}"></script>
     <script>
         let advSecBtn = document.querySelector('.more');
         let advSec = document.querySelector('.adv-opt');

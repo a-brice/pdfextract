@@ -1,7 +1,7 @@
 
 function pageChange(page){
     // Get the new src of image
-    pdf.src = `/media/${sess_id}/${page}`;
+    pdf.src = `/media/${sess_id}/${page}?t=${new Date().getTime()}`;
 
     console.log(page);
     // Change the visibility of box that aren't in the current page
@@ -12,6 +12,11 @@ function pageChange(page){
         else
             e.style.display = 'block';
     })
+}
+
+function goFirstPage(){
+    noPageInput.value = 1;
+    pageChange(0);
 }
 
 
