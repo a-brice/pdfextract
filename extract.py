@@ -71,13 +71,13 @@ def extract_text(img, dict_entity):
         cv2.rectangle(img_show, (left, top), (right, bottom), (0, 0, 120), 2)
         
         # Add text on image to show 
-        textcoords = left + 10 if roi['label'] == 'Text' else right + 10, (bottom + top) // 2 
+        textcoords = left + 10 if roi['type'] == 'Text' else right + 10, (bottom + top) // 2 
         cv2.putText(img_show, roi['label'], (textcoords[0], textcoords[1]), 1, 1, [0, 0, 200], 2)
         
     	# Crop the specific required portion of entire image
         img_cropped = img[top:bottom, left:right]
-        
-        
+
+
         if roi['type'] == 'Text':
             
             # Image filter 
@@ -85,16 +85,26 @@ def extract_text(img, dict_entity):
             # img_cropped = remove_noise(img_cropped)
             img_cropped = whiten(img_cropped)
             # img_cropped = thresholding(img_cropped)
-            # img_cropped = erode(img_cropped)
-            # img_cropped = np.pad(img_cropped, (15, 5), constant_values=255)
-            # cv2.imwrite('output/test/' + roi['name'] + '.png', img_cropped)
         
             # read from image 
             ocr_output = pytesseract.image_to_string(img_cropped, lang='eng')
-            cleaned_output = os.linesep.join([s for s in ocr_output.splitlines() if s])
-            cleaned_output = cleaned_output.replace("\r\n","@")
-            cleaned_output = cleaned_output.split("@")[-1]
+            cleaned_output = '\n'.join([s for s in ocr_output.splitlines() if s])
+            # cleaned_output = cleaned_output.replace("\r\n","@")
+            # cleaned_output = cleaned_output.split("@")[-1]
             text[roi['label']] = cleaned_output
+        
+        
+        if roi['type'] == 'Digit':
+            
+            # Image filter 
+            img_cropped = grayscale(img_cropped)
+            # img_cropped = remove_noise(img_cropped)
+            img_cropped = whiten(img_cropped)
+
+            # read from image 
+            params = '--psm 7 -c tessedit_char_whitelist=0123456789'
+            ocr_output = pytesseract.image_to_string(img_cropped, lang='eng', config=params)
+            text[roi['label']] = ocr_output
             
         
         if roi['type'] == 'Box':
