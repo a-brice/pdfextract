@@ -4,7 +4,7 @@ import os
 from PIL import Image
 
 
-def convert_to_img(template_dir, filename, dpi=180):
+def convert_to_img(template_dir, filename, dpi=180, page_to_convert=None):
 
     img_path = os.path.join(template_dir, 'pages')
     if not os.path.exists(img_path):
@@ -19,7 +19,9 @@ def convert_to_img(template_dir, filename, dpi=180):
     # for pdf file
     doc = fitz.open(os.path.join(template_dir, filename))
     nb_pages = doc.page_count
-    for no_page in range(nb_pages):
+    pages = range(nb_pages) if not page_to_convert else set(page_to_convert)
+
+    for no_page in pages:
         page = doc.load_page(no_page)
         px = page.get_pixmap(dpi=dpi)
         name = filename.rsplit('.', 1)[0]

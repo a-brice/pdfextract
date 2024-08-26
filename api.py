@@ -199,6 +199,7 @@ def extraction():
     with open(os.path.join(upload_folder, 'drawing.json'), 'r', encoding='utf-8') as json_file:
         config = json.load(json_file)
         dpi = config['dpi']
+        pages = set([x['page'] for x in config['drawing']])
         drawing = config['drawing']
 
     all_pdf_infos = {}
@@ -211,10 +212,11 @@ def extraction():
         test_dir = os.path.join(testdir, dirname)
         os.makedirs(test_dir, exist_ok=True)
         file.save(os.path.join(test_dir, filename))
-        utils.convert_to_img(test_dir, filename, dpi=dpi)
         if config['_1toN']:
+            utils.convert_to_img(test_dir, filename, dpi=dpi)
             infos = special_extract_from_pdf(template_dir, test_dir, config)
         else:
+            utils.convert_to_img(test_dir, filename, dpi=dpi, page_to_convert=pages)
             infos = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[filename] = infos
 
@@ -293,6 +295,7 @@ def process_files():
         config = json.load(json_file)
         dpi = config['dpi']
         config['drawing'] = utils.occurence_dict(config['drawing'])
+        pages = set([x['page'] for x in config['drawing']])
         drawing = config['drawing']
 
     # save and convert to image the template pdf
@@ -311,10 +314,11 @@ def process_files():
         test_dir = os.path.join(upload_folder, 'test_pdf', dirname)
         os.makedirs(test_dir, exist_ok=True)
         file.save(os.path.join(test_dir, filename))
-        utils.convert_to_img(test_dir, filename, dpi=dpi)
         if config['_1toN']:
+            utils.convert_to_img(test_dir, filename, dpi=dpi)
             infos = special_extract_from_pdf(template_dir, test_dir, config)
         else:
+            utils.convert_to_img(test_dir, filename, dpi=dpi, page_to_convert=pages)
             infos = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[filename] = infos
 
@@ -347,6 +351,7 @@ def local_extract():
         config = json.load(json_file)
         dpi = config['dpi']
         config['drawing'] = utils.occurence_dict(config['drawing'])
+        pages = set([x['page'] for x in config['drawing']])
         drawing = config['drawing']
 
     template.save(os.path.join(template_dir, 'current.pdf'))
@@ -373,10 +378,11 @@ def local_extract():
 
         print('Processing', file)
         shutil.copyfile(old_filepath, new_filepath)
-        utils.convert_to_img(test_dir, 'current.pdf', dpi=dpi)
         if config['_1toN']:
+            utils.convert_to_img(test_dir, 'current.pdf', dpi=dpi)
             infos = special_extract_from_pdf(template_dir, test_dir, config)
         else:
+            utils.convert_to_img(test_dir, 'current.pdf', dpi=dpi, page_to_convert=pages)
             infos = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[file] = infos
         
