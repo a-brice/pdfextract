@@ -162,6 +162,25 @@ def get_test_pdf(sess_id):
     return render_template('pdf_to_convert.html', sess_id=sess_id)
 
 
+def save_result(dirpath, infos, _1toN=False):
+    
+    
+    with open(os.path.join(dirpath, 'result.json'), 'w', encoding='utf-8') as file:
+        json.dump(infos, file, ensure_ascii=False)
+
+
+    if _1toN:
+        json_data = pd.json_normalize(infos, sep='_', max_level=1).to_dict(orient='records')[0]
+        df = pd.DataFrame.from_dict(json_data, orient='index')
+    else:    
+        df = pd.DataFrame.from_dict(infos, orient='index')
+    
+    df.reset_index().rename(columns={'index': 'File'}).to_csv(
+        os.path.join(dirpath, 'result.csv'), 
+        sep=';', 
+        index=False
+    )
+
 
 @app.route('/extraction/', methods=['POST'])
 def extraction():
@@ -193,20 +212,16 @@ def extraction():
         os.makedirs(test_dir, exist_ok=True)
         file.save(os.path.join(test_dir, filename))
         utils.convert_to_img(test_dir, filename, dpi=dpi)
-        infos = extract_from_pdf(template_dir, test_dir, drawing)
+        if config['_1toN']:
+            infos = special_extract_from_pdf(template_dir, test_dir, config)
+        else:
+            infos = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[filename] = infos
 
-
-    df = pd.DataFrame.from_dict(all_pdf_infos, orient='index')
-    df.reset_index().rename(columns={'index': 'File'}).to_csv(
-        os.path.join(upload_folder, 'result.csv'), 
-        sep=';', 
-        index=False
-    )
-    with open(os.path.join(upload_folder, 'result.json'), 'w', encoding='utf-8') as file:
-        df.to_json(file, orient='index', force_ascii=False)
+    save_result(upload_folder, all_pdf_infos, config['_1toN'])
 
     return Response('OK', 200)
+
 
 
 
@@ -229,6 +244,30 @@ def extract_from_pdf(template_dir, testdir, drawing):
         infos = dict(**infos, **info)
     
     return infos
+
+
+def special_extract_from_pdf(template_dir, testdir, config):
+    
+    template_dir = os.path.join(template_dir, 'pages')
+    test_dir = os.path.join(testdir, 'pages')
+    template_img = utils.get_page(template_dir, config['_1toNonPage'])
+    pages = len(os.listdir(test_dir))
+
+    drawing_page = [x for x in config['drawing'] if x['page'] == config['_1toNonPage']]
+    infos = {}
+
+    for no_page in range(pages):
+        start = time.time()
+        test_img = utils.get_page(test_dir, no_page)
+        img = alignement.align_to_template(test_img, template_img)
+        info, img_show = extract.extract_text(img, drawing_page)
+        extract.show_highlighted_img(testdir, no_page, img_show)
+        info[f'extraction_time(sec)'] = round((time.time() - start), 2)
+        infos[f'page#{no_page}'] = info
+    
+    return infos
+
+
 
 @app.route('/file-choice')
 def select_files():
@@ -273,18 +312,13 @@ def process_files():
         os.makedirs(test_dir, exist_ok=True)
         file.save(os.path.join(test_dir, filename))
         utils.convert_to_img(test_dir, filename, dpi=dpi)
-        infos = extract_from_pdf(template_dir, test_dir, drawing)
+        if config['_1toN']:
+            infos = special_extract_from_pdf(template_dir, test_dir, config)
+        else:
+            infos = extract_from_pdf(template_dir, test_dir, drawing)
         all_pdf_infos[filename] = infos
 
-
-    df = pd.DataFrame.from_dict(all_pdf_infos, orient='index')
-    df.reset_index().rename(columns={'index': 'File'}).to_csv(
-        os.path.join(upload_folder, 'result.csv'), 
-        sep=';', 
-        index=False
-    )
-    with open(os.path.join(upload_folder, 'result.json'), 'w', encoding='utf-8') as file:
-        df.to_json(file, orient='index', force_ascii=False)
+    save_result(upload_folder, all_pdf_infos, config['_1toN'])
 
     return {'sess_id': sess_id}
 
@@ -307,10 +341,6 @@ def local_extract():
 
     if request.method != 'POST' or not template or not config or not request.form.get('test'):
         return render_template('local_choice.html')
-
-    # local_template_path = request.form.get('template')
-    # local_config_path = request.form.get('config')
-    # local_testdir = request.form.get('test')
 
     config.save(os.path.join(tmp_dir, 'drawing.json'))
     with open(os.path.join(tmp_dir, 'drawing.json'), 'r', encoding='utf-8') as json_file:
@@ -344,17 +374,13 @@ def local_extract():
         print('Processing', file)
         shutil.copyfile(old_filepath, new_filepath)
         utils.convert_to_img(test_dir, 'current.pdf', dpi=dpi)
-        info = extract_from_pdf(template_dir, test_dir, drawing)
-        all_pdf_infos[file] = info
+        if config['_1toN']:
+            infos = special_extract_from_pdf(template_dir, test_dir, config)
+        else:
+            infos = extract_from_pdf(template_dir, test_dir, drawing)
+        all_pdf_infos[file] = infos
         
-    df = pd.DataFrame.from_dict(all_pdf_infos, orient='index')
-    df.reset_index().rename(columns={'index': 'File'}).to_csv(
-        os.path.join(tmp_dir, 'result.csv'), 
-        sep=';', 
-        index=False
-    )
-    with open(os.path.join(tmp_dir, 'result.json'), 'w', encoding='utf-8') as file:
-        df.to_json(file, orient='index', force_ascii=False)
+    save_result(tmp_dir, all_pdf_infos, config['_1toN'])
 
     return Response('OK', 200)
 

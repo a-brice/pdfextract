@@ -2,7 +2,7 @@ let dpiBtn = document.querySelector('.set-dpi');
 let newDpi; 
 
 dpiBtn.addEventListener('click', () => {
-    newDpi = document.querySelector('input[name="dpi"]').value;
+    newDpi = parseInt(document.querySelector('input[name="dpi"]').value);
     let formData = new FormData();
     formData.append('dpi', newDpi);
     formData.append('sess_id', sess_id);
