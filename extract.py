@@ -6,7 +6,7 @@ import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-black_pixel_threshold = 40 # numbers of zeros in the cropped pixel image
+black_pixel_threshold = 20 # numbers of zeros in the cropped pixel image
 
 
 
@@ -48,9 +48,36 @@ def remove_box_line(image):
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=10, minLineLength=10, maxLineGap=5)
     for line in lines:
             x1, y1, x2, y2 = line[0]
-            if x1 == x2 or y1 == y2:
+            if abs(x1 - x2) <= 2 or abs(y1 - y2) <= 2:
                 cv2.line(image, (x1, y1), (x2, y2), 255, 2)
     return image
+
+
+
+def remove_square_box(img):
+    
+    cts = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[0]
+    squares = []
+    
+    for i in [1, 2]: # contours of square interior + exterior 
+        if i >= len(cts):
+            break
+        peri = cv2.arcLength(cts[i], True)
+        approx = cv2.approxPolyDP(cts[i], 0.04 * peri, True)
+
+        if len(approx) == 4: # square -> 4 points 
+            squares += [approx]
+    
+    if len(squares) == 2:
+        mask = np.zeros(img.shape)
+        cv2.drawContours(mask, [squares[1]], -1, 255, -1)  
+        img = np.where(mask == 255, img, 255)
+    if len(squares) == 1:
+        cv2.drawContours(img, [squares[0]], -1, 0, 3)  
+        
+    return img
+        
+        
 
 
 def extract_text(img, dict_entity):
@@ -111,12 +138,14 @@ def extract_text(img, dict_entity):
             
             # Image filter 
             img_cropped = grayscale(img_cropped)
-            img_cropped = remove_box_line(img_cropped)
-            img_cropped = thresholding(img_cropped)
+            img_cropped = cv2.threshold(img_cropped, 127, 255, cv2.THRESH_BINARY)[1]
+            img_cropped = remove_square_box(img_cropped)
             black_pixels_nb = np.count_nonzero(img_cropped == 0)
             check = 1 if black_pixels_nb > black_pixel_threshold else 0
             text[roi['label']] = check
-                                
+        
+        # cv2.imwrite(f'output/{roi["label"]}.png', img_cropped)                       
+    
     img_show = cv2.addWeighted(img_show, 0.95, img_mask, 0.05, 0)
             
     return text, img_show
