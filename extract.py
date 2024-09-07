@@ -6,35 +6,31 @@ import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-black_pixel_threshold = 20 # numbers of zeros in the cropped pixel image
+black_pixel_threshold = 0.12 # proportion of black pixel on white pixel
 
 
 
 def grayscale(image):
 	return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-def whiten(image):
-    image[image > 200] = 255
-    image[image < 70] = 0
-    return image
-
-def remove_noise(image):
-	return cv2.medianBlur(image, 5)
 
 def thresholding(image):
-	return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    img = cv2.threshold(image, 190, 255, cv2.THRESH_TRUNC)[1]
+    return cv2.threshold(img, 130, 255, cv2.THRESH_TOZERO)[1]
+
 
 def dilate(image):
-	kernel = np.ones((3, 5),np.uint8)
+	kernel = np.ones((2, 2),np.uint8)
 	return cv2.dilate(image, 	kernel, iterations = 1)
 
+
 def erode(image):
-	kernel = np.ones((3,5),np.uint8)
+	kernel = np.ones((3,3),np.uint8)
 	return cv2.erode(image, 	kernel, iterations = 1)
 
 # opening - erosion followed by dilation
 def opening(image):
-	kernel = np.ones((5,5),np.uint8)
+	kernel = np.ones((2,2),np.uint8)
 	return cv2.morphologyEx(image, cv2.MORPH_OPEN, 	kernel)
 
 # canny edge 
@@ -104,47 +100,44 @@ def extract_text(img, dict_entity):
     	# Crop the specific required portion of entire image
         img_cropped = img[top:bottom, left:right]
 
+        # Image filter 
+        img_cropped = grayscale(img_cropped)
+        img_cropped = thresholding(img_cropped)
+
+        # handle void image quickly
+        if len(np.unique(img_cropped)) == 1:
+            text[roi['label']] = ''
+
 
         if roi['type'] == 'Text':
-            
-            # Image filter 
-            img_cropped = grayscale(img_cropped)
-            # img_cropped = remove_noise(img_cropped)
-            img_cropped = whiten(img_cropped)
-            # img_cropped = thresholding(img_cropped)
         
             # read from image 
             ocr_output = pytesseract.image_to_string(img_cropped, lang='eng')
-            cleaned_output = '\n'.join([s for s in ocr_output.splitlines() if s])
-            # cleaned_output = cleaned_output.replace("\r\n","@")
-            # cleaned_output = cleaned_output.split("@")[-1]
+            cleaned_output = ocr_output.strip()
             text[roi['label']] = cleaned_output
         
         
         if roi['type'] == 'Digit':
-            
-            # Image filter 
-            img_cropped = grayscale(img_cropped)
-            # img_cropped = remove_noise(img_cropped)
-            img_cropped = whiten(img_cropped)
 
             # read from image 
-            params = '--psm 7 -c tessedit_char_whitelist=0123456789'
+            params = '--psm 7 -c tessedit_char_whitelist=0123456789,.-'
             ocr_output = pytesseract.image_to_string(img_cropped, lang='eng', config=params)
-            text[roi['label']] = ocr_output
+            cleaned_output = ocr_output.strip()
+            text[roi['label']] = cleaned_output
             
         
         if roi['type'] == 'Box':
             
             # Image filter 
-            img_cropped = grayscale(img_cropped)
-            img_cropped = cv2.threshold(img_cropped, 127, 255, cv2.THRESH_BINARY)[1]
+            img_cropped = cv2.threshold(img_cropped, 140, 255, cv2.THRESH_BINARY)[1]
             img_cropped = remove_square_box(img_cropped)
             black_pixels_nb = np.count_nonzero(img_cropped == 0)
-            check = 1 if black_pixels_nb > black_pixel_threshold else 0
+            white_pixels_nb = np.count_nonzero(img_cropped == 255)
+            prop = black_pixels_nb / white_pixels_nb
+            check = 1 if prop > black_pixel_threshold else 0
             text[roi['label']] = check
         
-        # cv2.imwrite(f'output/{roi["label"]}.png', img_cropped)                       
+        cv2.imwrite(f'output/{roi["label"]}.png', img_cropped)                       
     
     img_show = cv2.addWeighted(img_show, 0.95, img_mask, 0.05, 0)
             
