@@ -51,6 +51,16 @@
                             <div class="number-right"></div>
                         </div>
                     </div>
+                    <hr>
+                    <div class="field">
+                        <span>Import config</span>
+                        <div class="import-zone">
+                            <label for="json" class="lbl-icon">
+                                <img src="{{url_for('static', filename='img/upload-solid.svg')}}" alt="import">
+                            </label>
+                            <input type="file" name="json" id="json" accept=".json">
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="frame">
@@ -88,12 +98,6 @@
                         <img src="{{url_for('get_media', sess_id=sess_id)}}" class="pdf" alt="pdf">
                     </div>
                 </div>
-            </div>
-            <div class="import-zone">
-                <label for="json" class="lbl-icon">
-                    <img src="{{url_for('static', filename='img/upload-solid.svg')}}" alt="import">
-                </label>
-                <input type="file" name="json" id="json" accept=".json">
             </div>
         </div>
         

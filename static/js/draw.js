@@ -99,13 +99,17 @@ function clickOnRect(Rect){
 }
 
 
+function roundNumber(x, decimal=3){
+    return Math.round(x * 10**decimal) / 10**decimal;
+}
+
 function setRectBbox(){
     const currentRectCoords = rect.getBoundingClientRect();
     contentCoords           = box.getBoundingClientRect();
-    const x0 = Math.round(currentRectCoords.left - contentCoords.left);
-    const x1 = Math.round(currentRectCoords.left - contentCoords.left + currentRectCoords.width);
-    const y0 = Math.round(currentRectCoords.top - contentCoords.top);
-    const y1 = Math.round(currentRectCoords.top - contentCoords.top + currentRectCoords.height);
+    const x0 = roundNumber(currentRectCoords.left - contentCoords.left);
+    const x1 = roundNumber(currentRectCoords.left - contentCoords.left + currentRectCoords.width);
+    const y0 = roundNumber(currentRectCoords.top - contentCoords.top);
+    const y1 = roundNumber(currentRectCoords.top - contentCoords.top + currentRectCoords.height);
     rect.setAttribute('bbox', `[${x0}, ${y0}, ${x1}, ${y1}]`);
     rect.setAttribute('page', currPage);
 }

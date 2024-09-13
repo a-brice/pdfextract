@@ -21,7 +21,7 @@ dpiBtn.addEventListener('click', () => {
 
 
 function applyDPI(arr, olddpi, newdpi){
-    return arr.map(x => Math.round(x / olddpi * newdpi));
+    return arr.map(x => x / olddpi * newdpi);
 }
 
 function adaptDrawing(newDpi){

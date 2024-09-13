@@ -216,7 +216,6 @@ button.cont{
 }
 
 div.import-zone{
-    margin-top: 20px;
     display: flex;
     border: 1px gray solid;
     width: 200px;
