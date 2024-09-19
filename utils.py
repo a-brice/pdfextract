@@ -11,7 +11,7 @@ def convert_to_img(template_dir, filename, dpi=180, page_to_convert=None):
         os.mkdir(img_path)
 
     # for images file (png, jpg)
-    if filename.rsplit('.', 1)[1] != 'pdf':
+    if filename.rsplit('.', 1)[1].lower() != 'pdf':
         img = Image.open(os.path.join(template_dir, filename))
         img.save(os.path.join(img_path, f'{filename.rsplit(".", 1)[0]}_$p#0.png'))
         return 1 # nb_pages = 1 since it's an image

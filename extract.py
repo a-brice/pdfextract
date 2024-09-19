@@ -87,7 +87,7 @@ def extract_text(img, dict_entity):
     
     for roi in dict_entity:
         
-        left, top, right, bottom = roi['bbox']
+        left, top, right, bottom = np.array(roi['bbox']).astype(int)
         
         # Draw rectangle on image to show
         cv2.rectangle(img_mask, (left, top), (right, bottom), (0, 0, 255), cv2.FILLED)
