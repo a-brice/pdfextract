@@ -4,3 +4,5 @@ v2
 uploads/*
 __pycache__
 output
+logs
+*.log

@@ -13,6 +13,7 @@ import pandas as pd
 import glob
 import shutil
 import pathlib 
+import logging 
 
 
 # TODO 
@@ -205,19 +206,36 @@ def extraction():
     all_pdf_infos = {}
     dirnames = {}
 
+    # Logging info
+    os.makedirs('logs', exist_ok=True)
+    logging.basicConfig(
+        filename=f'logs/extration-{time.time():.0f}.log', 
+        style="{",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        format="{asctime} - {levelname} - {message}",
+        level=logging.INFO
+    )
+    
+
     for file in request.files.getlist('pdfs[]'):
         filename = secure_filename(file.filename)
         dirname, extension = filename.rsplit('.', 1)
         dirname, dirnames = utils.gen_dirnames(dirname, dirnames)
         test_dir = os.path.join(testdir, dirname)
         os.makedirs(test_dir, exist_ok=True)
+        logging.info(f'Saving file at path = {os.path.join(test_dir, filename)}')
         file.save(os.path.join(test_dir, filename))
+        logging.info(f'Start converting file to image')
         if config['_1toN']:
             utils.convert_to_img(test_dir, filename, dpi=dpi)
+            logging.info(f'start extracting {file.filename}')
             infos = special_extract_from_pdf(template_dir, test_dir, config)
         else:
             utils.convert_to_img(test_dir, filename, dpi=dpi, page_to_convert=pages)
+            logging.info(f'start extracting {file.filename}')
             infos = extract_from_pdf(template_dir, test_dir, drawing)
+
+        logging.info(f'{file.filename} - end of extration')
         all_pdf_infos[filename] = infos
 
     save_result(upload_folder, all_pdf_infos, config['_1toN'])
@@ -244,6 +262,12 @@ def extract_from_pdf(template_dir, testdir, drawing):
         extract.show_highlighted_img(testdir, no_page, img_show)
         info[f'time_for_page_no_{no_page}(sec)'] = round((time.time() - start), 2)
         infos = dict(**infos, **info)
+
+        # Logging info 
+        progress = no_page / pages
+        coef = pages // 25
+        if pages >= 100 and no_page % (pages // coef) == 0:
+            logging.info(f'Extraction in progress : {progress:.3%} done')
     
     return infos
 
@@ -266,6 +290,12 @@ def special_extract_from_pdf(template_dir, testdir, config):
         extract.show_highlighted_img(testdir, no_page, img_show)
         info[f'extraction_time(sec)'] = round((time.time() - start), 2)
         infos[f'page#{no_page}'] = info
+
+        # Logging info 
+        progress = no_page / pages
+        coef = pages // 25
+        if pages >= 100 and no_page % (pages // coef) == 0:
+            logging.info(f'Extraction in progress : {progress:.3%} done')
     
     return infos
 
