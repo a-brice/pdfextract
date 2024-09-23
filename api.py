@@ -209,11 +209,14 @@ def extraction():
     # Logging info
     os.makedirs('logs', exist_ok=True)
     logging.basicConfig(
-        filename=f'logs/extration-{time.time():.0f}.log', 
         style="{",
         datefmt="%Y-%m-%d %H:%M:%S",
         format="{asctime} - {levelname} - {message}",
-        level=logging.INFO
+        level=logging.INFO,
+        handlers=[
+            logging.FileHandler(f'logs/extration-{time.time():.0f}.log'),
+            logging.StreamHandler()
+        ]
     )
     
 
