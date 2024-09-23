@@ -107,6 +107,7 @@ def extract_text(img, dict_entity):
         # handle void image quickly
         if len(np.unique(img_cropped)) == 1:
             text[roi['label']] = ''
+            continue
 
 
         if roi['type'] == 'Text':

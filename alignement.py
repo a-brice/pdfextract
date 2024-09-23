@@ -72,7 +72,7 @@ def align_to_template(cform='examples/fw9.png', template='templates/fw9.png', ou
         # Use homography matrix to transform the unaligned image wrt the reference image.
         aligned_img = cv2.warpPerspective(imgTest, homography, (width, height))
         
-        assert cv2.matchTemplate(imgRef, imgTest, method=cv2.TM_CCOEFF_NORMED)[0, 0] > 0.2, "Alignement not sufficient"
+        assert cv2.matchTemplate(imgRef, aligned_img, method=cv2.TM_CCOEFF_NORMED)[0, 0] > 0.2, "Alignement not sufficient"
             
     except:
         return np.zeros_like(imgTest)
