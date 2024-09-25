@@ -16,8 +16,8 @@ def grayscale(image):
 
 def thresholding(image):
     img = cv2.threshold(image, 190, 255, cv2.THRESH_TRUNC)[1]
-    return cv2.threshold(img, 130, 255, cv2.THRESH_TOZERO)[1]
-
+    img[img >=160] = 255
+    return img
 
 def dilate(image):
 	kernel = np.ones((2, 2),np.uint8)
@@ -74,6 +74,34 @@ def remove_square_box(img):
     return img
         
         
+  
+
+def remove_context_box(img):
+    # For UFI
+    cts = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[0]
+    rects = []
+    
+    for contour in cts:
+        for eps in np.linspace(0.001, 0.5, 1000):
+            peri = cv2.arcLength(contour, True)
+            approx = cv2.approxPolyDP(contour, eps * peri, True)
+            if len(approx) == 4:
+                rects.append(approx)
+
+    rects = np.unique(rects, axis=0)
+    mask = np.zeros_like(img) + 255
+    
+    for rectangle in rects:
+        x_min, y_min = rectangle.squeeze().min(axis=0)
+        x_max, y_max = rectangle.squeeze().max(axis=0)
+        coef = abs((x_min - x_max) / (y_min - y_max))
+        coef = 1 / coef if coef < 1 else coef
+        if coef < 3.5:
+            mask[y_min+1:y_max, x_min+1:x_max] = img[y_min+1:y_max, x_min+1:x_max]
+    
+    return mask 
+
+
 
 
 def extract_text(img, dict_entity):
